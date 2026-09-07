@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joya — Grillz & Partenaires</title>
+
+<style>
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+body {
+font-family: Arial, sans-serif;
+background: #0b0b0b;
+color: white;
+}
+
+header {
+padding: 25px 8%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-bottom: 1px solid #292929;
+}
+
+.logo {
+font-size: 28px;
+font-weight: bold;
+letter-spacing: 3px;
+}
+
+nav a {
+color: white;
+text-decoration: none;
+margin-left: 25px;
+}
+
+.hero {
+min-height: 75vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+text-align: center;
+padding: 40px 20px;
+}
+
+.hero h1 {
+font-size: 64px;
+margin-bottom: 20px;
+}
+
+.hero p {
+max-width: 650px;
+color: #bdbdbd;
+font-size: 20px;
+line-height: 1.6;
+margin-bottom: 35px;
+}
+
+.buttons {
+display: flex;
+gap: 15px;
+flex-wrap: wrap;
+justify-content: center;
+}
+
+.button {
+padding: 15px 25px;
+border-radius: 8px;
+text-decoration: none;
+font-weight: bold;
+background: white;
+color: black;
+}
+
+.button.secondary {
+background: transparent;
+color: white;
+border: 1px solid #555;
+}
+
+.features {
+padding: 70px 8%;
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 20px;
+}
+
+.card {
+background: #151515;
+border: 1px solid #292929;
+border-radius: 15px;
+padding: 30px;
+}
+
+.card h2 {
+margin-bottom: 15px;
+}
+
+.card p {
+color: #aaa;
+line-height: 1.6;
+}
+
+footer {
+text-align: center;
+padding: 40px;
+color: #777;
+border-top: 1px solid #292929;
+}
+
+@media (max-width: 800px) {
+.hero h1 {
+font-size: 42px;
+}
+
+.features {
+grid-template-columns: 1fr;
+}
+
+nav {
+display: none;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">JOYA</div>
+
+<nav>
+<a href="#">Accueil</a>
+<a href="#">Clients</a>
+<a href="#">Partenaires</a>
+<a href="#">Connexion</a>
+</nav>
+</header>
+
+<main>
+
+<section class="hero">
+<h1>JOYA</h1>
+
+<p>
+L'écosystème qui connecte les clients, les créateurs
+et les partenaires autour de la fabrication de grillz.
+</p>
+
+<div class="buttons">
+<a href="#" class="button">Commander un grillz</a>
+<a href="#" class="button secondary">Devenir partenaire</a>
+</div>
+</section>
+
+<section class="features">
+
+<div class="card">
+<h2>👤 Clients</h2>
+<p>
+Suivez votre commande et l'avancement de votre grillz
+directement depuis votre espace personnel.
+</p>
+</div>
+
+<div class="card">
+<h2>🤝 Partenaires</h2>
+<p>
+Recevez vos commandes, suivez vos missions et consultez
+vos revenus depuis votre espace partenaire.
+</p>
+</div>
+
+<div class="card">
+<h2>💰 Paiements</h2>
+<p>
+Votre solde peut être demandé en virement bancaire
+ou utilisé pour commander du matériel chez Joya.
+</p>
+</div>
+
+</section>
+
+</main>
+
+<footer>
+© 2026 Joya — Tous droits réservés
+</footer>
+
+</body>
+</html>
