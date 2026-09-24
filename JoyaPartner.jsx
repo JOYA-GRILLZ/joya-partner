@@ -53,7 +53,7 @@ import {
   searchClients,
   searchOrders,
   translateRpcError,
-} from "./lib/api";
+} from "./api";
 
 /* ============================================================
    JOYA PARTNER — plateforme Client / Partenaire / Admin
