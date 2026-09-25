@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./JoyaPartner.jsx";
-import { isSupabaseConfigured } from "./supabaseClient";
+import { isSupabaseConfigured } from "./lib/supabaseClient";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

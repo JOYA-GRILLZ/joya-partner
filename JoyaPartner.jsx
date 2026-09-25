@@ -49,11 +49,12 @@ import {
   getOrderDocuments,
   addOrderDocument,
   deleteOrderDocument,
+  getDocumentSignedUrl,
   searchPartners,
   searchClients,
   searchOrders,
   translateRpcError,
-} from "./api";
+} from "./lib/api";
 
 /* ============================================================
    JOYA PARTNER — plateforme Client / Partenaire / Admin
@@ -994,7 +995,7 @@ function PartnerDashboard({ showToast }) {
       <Card style={{ marginBottom: 20, padding: 0, overflow: "hidden" }}>
         <Table
           empty="Aucune commande pour le moment."
-          head={["Date", "Client", "Montant", "Remise", "Code", "Commission", "Statut", "Motif"]}
+          head={["Date", "Client", "Montant", "Remise", "Code", "Commission", "Documents", "Statut", "Motif"]}
           rows={myOrders.map((o) => {
             const c = commissionForOrder(o.id);
             return [
@@ -1004,6 +1005,7 @@ function PartnerDashboard({ showToast }) {
               `-${o.client_discount_rate}%`,
               o.partner_code_used,
               c ? `${formatEUR(c.commission_amount)} (${c.commission_rate}%)` : "—",
+              <PartnerOrderDocuments orderId={o.id} showToast={showToast} />,
               <StatusBadge status={o.status} />,
               o.cancel_reason || "—",
             ];
@@ -2155,6 +2157,77 @@ function AdminClients({ showToast }) {
 const DOC_TYPES = { devis: "📄 Devis", facture: "🧾 Facture", autre: "📎 Autre document" };
 const ALLOWED_DOC_MIME_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 const MAX_DOC_SIZE_BYTES = 10485760; // 10 Mo — identique à la limite du bucket Storage V5
+
+// Consultation des documents d'une commande, côté PARTENAIRE — lecture
+// seule (pas d'ajout ni de suppression, ça reste réservé à l'admin).
+// Réutilise getOrderDocuments() telle quelle : la policy RLS de documents
+// filtre déjà automatiquement pour ne renvoyer que les commandes du
+// partenaire connecté — aucune vérification supplémentaire nécessaire ici.
+function PartnerOrderDocuments({ orderId, showToast }) {
+  const [open, setOpen] = useState(false);
+  const [docs, setDocs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [openingId, setOpeningId] = useState(null);
+
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      setLoading(true);
+      try {
+        setDocs(await getOrderDocuments(orderId));
+      } catch (e) {
+        showToast(translateRpcError(e), "error");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [open, orderId, showToast]);
+
+  async function openDoc(d) {
+    setOpeningId(d.id);
+    try {
+      const url = await getDocumentSignedUrl(d.storage_path);
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (e) {
+      showToast(translateRpcError(e), "error");
+    } finally {
+      setOpeningId(null);
+    }
+  }
+
+  if (!open) {
+    return (
+      <button onClick={() => setOpen(true)} style={{ background: "none", border: "none", color: C.chrome1, cursor: "pointer", fontSize: 12, textDecoration: "underline" }}>
+        📁 Documents
+      </button>
+    );
+  }
+
+  return (
+    <div style={{ minWidth: 190 }}>
+      {loading ? (
+        <div style={{ color: "#555", fontSize: 11.5 }}>Chargement…</div>
+      ) : docs.length === 0 ? (
+        <div style={{ color: "#555", fontSize: 11.5 }}>Aucun document disponible.</div>
+      ) : (
+        docs.map((d) => (
+          <div key={d.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11.5, marginBottom: 4, gap: 6 }}>
+            <span>
+              {DOC_TYPES[d.doc_type] || "📎"} {d.file_name}
+            </span>
+            <button
+              onClick={() => openDoc(d)}
+              disabled={openingId === d.id}
+              style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: 11, textDecoration: "underline" }}
+            >
+              {openingId === d.id ? "…" : "Ouvrir"}
+            </button>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
 
 // Upload réel en 2 temps (voir addOrderDocument dans api.js) : la ligne de
 // métadonnées ET le fichier réel dans Supabase Storage. Chargé uniquement

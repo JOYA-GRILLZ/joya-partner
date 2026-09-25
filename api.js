@@ -804,3 +804,13 @@ export async function deleteOrderDocument(documentId) {
     }
   }
 }
+
+// Génère une URL temporaire (60s) pour consulter un document — le bucket
+// est privé, aucune URL publique permanente n'existe. Soumis à la policy
+// storage RLS : un admin peut ouvrir n'importe quel document, un partenaire
+// uniquement ceux liés à ses propres commandes.
+export async function getDocumentSignedUrl(storagePath) {
+  const { data, error } = await supabase.storage.from(DOCUMENTS_BUCKET).createSignedUrl(storagePath, 60);
+  if (error) throw error;
+  return data.signedUrl;
+}
